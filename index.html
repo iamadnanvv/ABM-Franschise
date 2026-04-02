@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ABM OS Franchise</title>
+  <meta name="description" content="Build a systemized agency powered by AI with ABM OS franchise infrastructure.">
+  <meta name="theme-color" content="#7c3aed">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #040404;
+      --text: #eaeaea;
+      --muted: #a3a3a3;
+      --glass-bg: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --surface-accent: rgba(124, 58, 237, 0.12);
+      color-scheme: dark;
+    }
+
+    body.light-theme {
+      --bg: #f8f7ff;
+      --text: #1b1530;
+      --muted: #5f5b73;
+      --glass-bg: rgba(255, 255, 255, 0.72);
+      --glass-border: rgba(124, 58, 237, 0.16);
+      --surface-accent: rgba(124, 58, 237, 0.08);
+      color-scheme: light;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", sans-serif;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(124, 58, 237, 0.16), transparent 35%),
+        radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.12), transparent 35%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      transition: background 0.35s ease, color 0.35s ease;
+    }
+
+    .glass {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+      .glass {
+        background: rgba(24, 24, 24, 0.78);
+      }
+
+      body.light-theme .glass {
+        background: rgba(255, 255, 255, 0.92);
+      }
+    }
+
+    .gradient-text {
+      background: linear-gradient(90deg, #7c3aed, #a855f7, #ec4899);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .gradient-btn {
+      background: linear-gradient(135deg, #7c3aed, #9333ea);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+      min-height: 44px;
+    }
+
+    .gradient-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(124, 58, 237, 0.4);
+      opacity: 0.96;
+    }
+
+    .fade-up {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .fade-up.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .section {
+      padding: clamp(3.5rem, 6vw, 6rem) 1rem;
+      content-visibility: auto;
+      contain-intrinsic-size: 1px 640px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .section-title {
+      font-size: clamp(1.65rem, 1.35rem + 1.5vw, 2.4rem);
+      line-height: 1.2;
+      margin: 0 0 0.8rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .range {
+      width: 100%;
+      appearance: none;
+      -webkit-appearance: none;
+      height: 8px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(124, 58, 237, 0.85), rgba(236, 72, 153, 0.85));
+      outline: none;
+      margin-top: 0.35rem;
+    }
+
+    .range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      border: 2px solid #9333ea;
+      cursor: pointer;
+    }
+
+    .range::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      border: 2px solid #9333ea;
+      cursor: pointer;
+    }
+
+    .theme-toggle {
+      border: 1px solid var(--glass-border);
+      background: var(--glass-bg);
+      color: var(--text);
+      min-height: 44px;
+      min-width: 44px;
+    }
+
+    .counter-value {
+      font-variant-numeric: tabular-nums;
+    }
+
+    .input-field {
+      width: 100%;
+      border-radius: 0.75rem;
+      border: 1px solid var(--glass-border);
+      background: var(--glass-bg);
+      color: var(--text);
+      padding: 0.8rem 0.95rem;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .input-field:focus {
+      border-color: rgba(147, 51, 234, 0.75);
+      box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.18);
+    }
+
+    body.light-theme .bg-neutral-950\/40 {
+      background: rgba(255, 255, 255, 0.35);
+    }
+
+    body.light-theme .text-neutral-300,
+    body.light-theme .text-neutral-400,
+    body.light-theme .text-neutral-500 {
+      color: var(--muted) !important;
+    }
+
+    .tap-target {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mobile-nav {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.25s ease;
+    }
+
+    .mobile-nav.open {
+      max-height: 220px;
+    }
+
+    .desktop-nav {
+      display: none;
+    }
+
+    .mobile-menu-btn {
+      min-width: 44px;
+      min-height: 44px;
+      border: 1px solid var(--glass-border);
+      background: var(--glass-bg);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 0 0.8rem;
+    }
+
+    @media (min-width: 768px) {
+      .desktop-nav {
+        display: flex;
+      }
+
+      .mobile-nav,
+      .mobile-menu-btn {
+        display: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      .fade-up,
+      .gradient-btn,
+      .theme-toggle,
+      .mobile-nav {
+        transition: none !important;
+      }
+
+      .fade-up {
+        opacity: 1;
+        transform: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="fixed inset-x-0 top-0 z-50 px-4 py-4 md:px-8">
+    <div class="glass mx-auto max-w-6xl rounded-3xl px-4 py-3 md:rounded-full md:px-5">
+      <div class="flex items-center justify-between gap-3">
+        <a href="#" class="text-sm font-semibold tracking-wide tap-target">ABM OS</a>
+        <div class="desktop-nav items-center gap-5 text-sm text-neutral-300">
+          <a href="#model" class="tap-target hover:text-white transition-colors">Model</a>
+          <a href="#income" class="tap-target hover:text-white transition-colors">Income</a>
+          <button id="themeToggle" class="theme-toggle tap-target rounded-full px-3 py-2 text-xs font-medium" type="button" aria-label="Toggle theme">
+            Light Mode
+          </button>
+          <a href="#apply" class="gradient-btn tap-target rounded-full px-4 py-2 font-medium text-white">Apply</a>
+        </div>
+        <div class="flex items-center gap-2 md:hidden">
+          <button id="themeToggleMobile" class="theme-toggle tap-target rounded-full px-3 py-2 text-xs font-medium" type="button" aria-label="Toggle theme">
+            Light
+          </button>
+          <button id="mobileMenuBtn" class="mobile-menu-btn" type="button" aria-expanded="false" aria-controls="mobileNav">
+            Menu
+          </button>
+        </div>
+      </div>
+      <div id="mobileNav" class="mobile-nav md:hidden">
+        <div class="flex flex-col gap-2 pt-3 text-sm text-neutral-300">
+          <a href="#model" class="tap-target rounded-xl px-2 hover:bg-white/5">Model</a>
+          <a href="#income" class="tap-target rounded-xl px-2 hover:bg-white/5">Income</a>
+          <a href="#apply" class="gradient-btn tap-target rounded-full px-4 py-2 font-medium text-white">Apply</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <header class="relative flex min-h-screen items-center justify-center px-4 pt-24 text-center sm:px-6">
+    <div class="mx-auto max-w-4xl">
+      <p class="mb-5 inline-flex items-center gap-2 rounded-full border border-purple-500/35 bg-purple-500/10 px-4 py-1 text-xs font-medium text-purple-300">
+        <span aria-hidden="true">🔥</span>
+        Only 10 Franchise Slots Available
+      </p>
+      <h1 class="mb-6 text-3xl font-semibold leading-tight sm:text-5xl md:text-7xl">
+        Build a <span class="gradient-text">Systemized Agency</span><br>
+        Powered by AI
+      </h1>
+      <p class="mx-auto mb-10 max-w-2xl text-base text-neutral-400 md:text-lg">
+        Launch your own digital business with ABM OS infrastructure, AI automation, and centralized delivery operations.
+      </p>
+      <a href="#apply" class="gradient-btn tap-target inline-flex rounded-full px-8 py-3 font-medium text-white">
+        Apply Now
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <section class="section fade-up">
+      <div class="mx-auto max-w-6xl">
+        <div class="mx-auto max-w-3xl text-center">
+          <h2 class="section-title">Not an Agency - an <span class="gradient-text">Operating System</span></h2>
+          <p class="text-neutral-400">Scale with reliable systems, not manual effort.</p>
+        </div>
+        <div class="mt-10 grid gap-5 md:grid-cols-3">
+          <article class="glass rounded-2xl p-6">
+            <h3 class="font-medium">Central Systems</h3>
+            <p class="mt-2 text-sm text-neutral-400">Unified process from lead to delivery.</p>
+          </article>
+          <article class="glass rounded-2xl p-6">
+            <h3 class="font-medium">AI Automation</h3>
+            <p class="mt-2 text-sm text-neutral-400">Automate repetitive execution and reporting.</p>
+          </article>
+          <article class="glass rounded-2xl p-6">
+            <h3 class="font-medium">Global Delivery</h3>
+            <p class="mt-2 text-sm text-neutral-400">Access scalable fulfillment resources worldwide.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section fade-up bg-neutral-950/40">
+      <div class="mx-auto max-w-6xl">
+        <h2 class="section-title text-center">System Infrastructure</h2>
+        <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div class="glass rounded-2xl p-6">AnyDesk Ops</div>
+          <div class="glass rounded-2xl p-6">Wix Development</div>
+          <div class="glass rounded-2xl p-6">Office Workflow</div>
+          <div class="glass rounded-2xl p-6">Brand Assets</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section fade-up">
+      <div class="mx-auto max-w-6xl">
+        <h2 class="section-title text-center">Why Agencies Fail</h2>
+        <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div class="glass rounded-2xl p-6">No systems</div>
+          <div class="glass rounded-2xl p-6">Low revenue</div>
+          <div class="glass rounded-2xl p-6">Freelancer issues</div>
+          <div class="glass rounded-2xl p-6">Burnout</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="model" class="section fade-up text-center">
+      <div class="mx-auto max-w-4xl">
+        <h2 class="section-title">ABM OS Flow</h2>
+        <p class="text-neutral-400">Client -> System -> AI -> Delivery -> Revenue</p>
+      </div>
+    </section>
+
+    <section class="section fade-up pt-0 text-center">
+      <div class="mx-auto grid max-w-6xl gap-5 sm:grid-cols-3">
+        <article class="glass rounded-2xl p-6">
+          <p class="text-xs uppercase tracking-[0.12em] text-neutral-400">Operators</p>
+          <p class="counter-value mt-2 text-4xl font-semibold gradient-text" data-counter-target="250" data-counter-suffix="+">0</p>
+        </article>
+        <article class="glass rounded-2xl p-6">
+          <p class="text-xs uppercase tracking-[0.12em] text-neutral-400">Automations Deployed</p>
+          <p class="counter-value mt-2 text-4xl font-semibold gradient-text" data-counter-target="4200" data-counter-suffix="+">0</p>
+        </article>
+        <article class="glass rounded-2xl p-6">
+          <p class="text-xs uppercase tracking-[0.12em] text-neutral-400">Avg. Setup Time</p>
+          <p class="counter-value mt-2 text-4xl font-semibold gradient-text" data-counter-target="14" data-counter-suffix=" Days">0</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="income" class="section fade-up text-center">
+      <div class="mx-auto max-w-3xl">
+        <h2 class="section-title">Income Potential</h2>
+        <div class="glass mx-auto mt-8 rounded-2xl p-5 sm:p-8">
+          <div class="text-left">
+            <label for="clients" class="text-sm text-neutral-300">Number of Clients: <span id="clientsValue">5</span></label>
+            <input class="range" type="range" id="clients" min="1" max="50" value="5">
+          </div>
+          <div class="mt-6 text-left">
+            <label for="retainer" class="text-sm text-neutral-300">Monthly Retainer: <span id="retainerValue">₹20,000</span></label>
+            <input class="range" type="range" id="retainer" min="10000" max="100000" step="1000" value="20000">
+          </div>
+          <p class="mt-8 text-sm uppercase tracking-[0.16em] text-neutral-400">Estimated Monthly Revenue</p>
+          <h3 id="output" class="mt-2 break-words text-3xl font-semibold sm:text-4xl md:text-5xl">₹1,00,000</h3>
+        </div>
+        <p class="mt-4 text-xs text-neutral-500">Example: 10 clients x ₹25K = ₹2.5L/month</p>
+      </div>
+    </section>
+
+    <section class="section fade-up">
+      <div class="mx-auto max-w-6xl">
+        <h2 class="section-title text-center">Revenue Model</h2>
+        <div class="mt-10 grid gap-6 md:grid-cols-2">
+          <article class="glass rounded-2xl p-8">
+            <h3 class="text-xl font-medium">Freelance Teams</h3>
+            <p class="mt-3 text-sm text-neutral-400">You keep 70% and ABM retains 30% per client.</p>
+          </article>
+          <article class="glass rounded-2xl p-8">
+            <h3 class="text-xl font-medium">Franchise Investors</h3>
+            <p class="mt-3 text-sm text-neutral-400">40% per client plus 20% monthly revenue share.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section fade-up text-center">
+      <div class="mx-auto max-w-6xl">
+        <h2 class="section-title">Franchise Model</h2>
+        <div class="mt-10 grid gap-6 md:grid-cols-2">
+          <div class="glass rounded-2xl p-6">We handle systems and delivery</div>
+          <div class="glass rounded-2xl p-6">You handle clients and growth</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section fade-up text-center">
+      <div class="mx-auto max-w-6xl">
+        <h2 class="section-title">Growth Path</h2>
+        <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div class="glass rounded-2xl p-6">1. Setup</div>
+          <div class="glass rounded-2xl p-6">2. Clients</div>
+          <div class="glass rounded-2xl p-6">3. Automate</div>
+          <div class="glass rounded-2xl p-6">4. Scale</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="apply" class="section fade-up text-center">
+      <div class="mx-auto max-w-3xl">
+        <h2 class="section-title">Apply for Franchise</h2>
+        <p class="mt-3 text-neutral-400">Share your details and our team will reach out.</p>
+
+        <form id="leadForm" class="glass mt-8 rounded-2xl p-6 text-left md:p-8" novalidate>
+          <div class="grid gap-4 md:grid-cols-2">
+            <div class="md:col-span-2">
+              <label for="name" class="mb-2 block text-sm muted">Full Name</label>
+              <input id="name" name="name" class="input-field" type="text" autocomplete="name" placeholder="Enter your full name" required>
+            </div>
+            <div>
+              <label for="phone" class="mb-2 block text-sm muted">Phone Number</label>
+              <input id="phone" name="phone" class="input-field" type="tel" autocomplete="tel" inputmode="numeric" placeholder="+91 98765 43210" required>
+            </div>
+            <div>
+              <label for="email" class="mb-2 block text-sm muted">Email Address</label>
+              <input id="email" name="email" class="input-field" type="email" autocomplete="email" placeholder="you@example.com" required>
+            </div>
+            <div class="md:col-span-2">
+              <label for="message" class="mb-2 block text-sm muted">Message</label>
+              <textarea id="message" name="message" class="input-field" rows="4" placeholder="Tell us about your goals and requirements." required></textarea>
+            </div>
+          </div>
+          <button type="submit" class="gradient-btn tap-target mt-6 inline-flex rounded-full px-8 py-3 font-medium text-white">
+            Submit Application
+          </button>
+          <p id="formMessage" class="mt-3 text-sm muted" aria-live="polite"></p>
+          <p class="mt-3 text-xs text-neutral-500">
+            Prefer email? <a href="mailto:adwebcomicllp@gmail.com" class="underline decoration-purple-400/60 underline-offset-4">adwebcomicllp@gmail.com</a>
+          </p>
+        </form>
+      </div>
+    </section>
+
+    <section class="section fade-up pt-0 text-center">
+      <div class="mx-auto max-w-3xl rounded-3xl border border-purple-500/20 bg-purple-500/5 px-6 py-14">
+        <h2 class="text-3xl font-semibold sm:text-4xl">Only 10 Slots Available</h2>
+        <p class="mt-4 text-neutral-400">Serious operators only.</p>
+        <a href="mailto:adwebcomicllp@gmail.com" class="gradient-btn tap-target mt-8 inline-flex rounded-full px-10 py-4 font-medium text-white">
+          Secure Your Spot
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const clients = document.getElementById("clients");
+    const retainer = document.getElementById("retainer");
+    const output = document.getElementById("output");
+    const clientsValue = document.getElementById("clientsValue");
+    const retainerValue = document.getElementById("retainerValue");
+
+    function formatINR(value) {
+      return "₹" + Number(value).toLocaleString("en-IN");
+    }
+
+    function calc() {
+      const total = Number(clients.value) * Number(retainer.value);
+      output.textContent = formatINR(total);
+      clientsValue.textContent = clients.value;
+      retainerValue.textContent = formatINR(retainer.value);
+    }
+
+    clients.addEventListener("input", calc);
+    retainer.addEventListener("input", calc);
+    calc();
+
+    const themeToggle = document.getElementById("themeToggle");
+    const themeToggleMobile = document.getElementById("themeToggleMobile");
+    const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+    const mobileNav = document.getElementById("mobileNav");
+    const savedTheme = localStorage.getItem("abmTheme");
+    if (savedTheme === "light") {
+      document.body.classList.add("light-theme");
+      themeToggle.textContent = "Dark Mode";
+      themeToggleMobile.textContent = "Dark";
+    }
+
+    function applyThemeLabel(isLight) {
+      themeToggle.textContent = isLight ? "Dark Mode" : "Light Mode";
+      themeToggleMobile.textContent = isLight ? "Dark" : "Light";
+    }
+
+    function toggleTheme() {
+      const isLight = document.body.classList.toggle("light-theme");
+      localStorage.setItem("abmTheme", isLight ? "light" : "dark");
+      applyThemeLabel(isLight);
+    }
+
+    themeToggle.addEventListener("click", toggleTheme);
+    themeToggleMobile.addEventListener("click", toggleTheme);
+
+    mobileMenuBtn.addEventListener("click", () => {
+      const isOpen = mobileNav.classList.toggle("open");
+      mobileMenuBtn.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    mobileNav.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => {
+        mobileNav.classList.remove("open");
+        mobileMenuBtn.setAttribute("aria-expanded", "false");
+      });
+    });
+
+    const counters = document.querySelectorAll("[data-counter-target]");
+    function animateCounter(el) {
+      const target = Number(el.getAttribute("data-counter-target"));
+      const suffix = el.getAttribute("data-counter-suffix") || "";
+      const duration = 1500;
+      const start = performance.now();
+
+      function update(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const value = Math.floor(progress * target);
+        el.textContent = value.toLocaleString("en-IN") + suffix;
+        if (progress < 1) {
+          requestAnimationFrame(update);
+        }
+      }
+
+      requestAnimationFrame(update);
+    }
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const fadeEls = document.querySelectorAll(".fade-up");
+    if (reduceMotion || !("IntersectionObserver" in window)) {
+      fadeEls.forEach((el) => el.classList.add("active"));
+      counters.forEach((counter) => {
+        const target = Number(counter.getAttribute("data-counter-target"));
+        const suffix = counter.getAttribute("data-counter-suffix") || "";
+        counter.textContent = target.toLocaleString("en-IN") + suffix;
+      });
+    } else {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("active");
+              if (entry.target.querySelector("[data-counter-target]")) {
+                entry.target.querySelectorAll("[data-counter-target]").forEach((counter) => {
+                  if (!counter.dataset.animated) {
+                    animateCounter(counter);
+                    counter.dataset.animated = "true";
+                  }
+                });
+              }
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.2 }
+      );
+
+      fadeEls.forEach((el) => observer.observe(el));
+    }
+
+    const leadForm = document.getElementById("leadForm");
+    const formMessage = document.getElementById("formMessage");
+
+    leadForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const formData = new FormData(leadForm);
+      const name = String(formData.get("name") || "").trim();
+      const phone = String(formData.get("phone") || "").trim();
+      const email = String(formData.get("email") || "").trim().toLowerCase();
+      const message = String(formData.get("message") || "").trim();
+      const phoneDigits = phone.replace(/\D/g, "");
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+      if (!name || !phone || !email || !message) {
+        formMessage.textContent = "Please complete all fields before submitting.";
+        return;
+      }
+
+      if (phoneDigits.length < 10) {
+        formMessage.textContent = "Please enter a valid phone number.";
+        return;
+      }
+
+      if (!emailPattern.test(email)) {
+        formMessage.textContent = "Please enter a valid email address.";
+        return;
+      }
+
+      const submitBtn = leadForm.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Redirecting...";
+
+      const whatsappMessage = [
+        "New Website Enquiry",
+        "",
+        `Name: ${name}`,
+        `Phone Number: ${phone}`,
+        `Email: ${email}`,
+        `Message: ${message}`
+      ].join("\n");
+
+      const whatsappUrl = `https://wa.me/+919656778508?text=${encodeURIComponent(whatsappMessage)}`;
+      formMessage.textContent = "Thank you. Redirecting you to WhatsApp to complete your submission.";
+      window.location.href = whatsappUrl;
+    });
+  </script>
+</body>
+</html>
